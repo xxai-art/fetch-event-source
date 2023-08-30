@@ -3,7 +3,7 @@ import { EventSourceMessage, getBytes, getLines, getMessages } from './parse';
 export const EventStreamContentType = 'text/event-stream';
 
 const DefaultRetryInterval = 1000;
-const LastEventId = 'last-event-id';
+// const LastEventId = 'last-event-id';
 
 export interface FetchEventSourceInit extends RequestInit {
     /**
@@ -96,16 +96,16 @@ export function fetchEventSource(input: RequestInfo, {
                 });
 
                 await onopen(response);
-                
-                await getBytes(response.body!, getLines(getMessages(id => {
-                    if (id) {
-                        // store the id and send it back on the next retry:
-                        headers[LastEventId] = id;
-                    } else {
-                        // don't send the last-event-id header anymore:
-                        delete headers[LastEventId];
-                    }
-                }, retry => {
+                // getLines(getMessages(id => {
+                //     if (id) {
+                //         // store the id and send it back on the next retry:
+                //         headers[LastEventId] = id;
+                //     } else {
+                //         // don't send the last-event-id header anymore:
+                //         delete headers[LastEventId];
+                //     }
+                // },
+                await getBytes(response.body!,  retry => {
                     retryInterval = retry;
                 }, onmessage)));
 
