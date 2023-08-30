@@ -47,7 +47,6 @@ export interface FetchEventSourceInit extends RequestInit {
      * By default, fetchEventSource will close the request and reopen it
      * automatically when the document becomes visible again.
      */
-    openWhenHidden?: boolean;
 
     /** The Fetch function to use. Defaults to window.fetch */
     fetch?: typeof fetch;
@@ -60,7 +59,6 @@ export function fetchEventSource(input: RequestInfo, {
     onmessage,
     onclose,
     onerror,
-    openWhenHidden,
     fetch: inputFetch,
     ...rest
 }: FetchEventSourceInit) {
@@ -72,21 +70,10 @@ export function fetchEventSource(input: RequestInfo, {
         }
 
         let curRequestController: AbortController;
-        function onVisibilityChange() {
-            curRequestController.abort(); // close existing request on every visibility change
-            if (!document.hidden) {
-                create(); // page is now visible again, recreate request.
-            }
-        }
-
-        if (!openWhenHidden) {
-            document.addEventListener('visibilitychange', onVisibilityChange);
-        }
 
         let retryInterval = DefaultRetryInterval;
         let retryTimer = 0;
         function dispose() {
-            document.removeEventListener('visibilitychange', onVisibilityChange);
             window.clearTimeout(retryTimer);
             curRequestController.abort();
         }
