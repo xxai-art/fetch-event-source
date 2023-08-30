@@ -96,16 +96,16 @@ export function fetchEventSource(input: RequestInfo, {
                 });
 
                 await onopen(response);
-                // getLines(getMessages(id => {
-                //     if (id) {
-                //         // store the id and send it back on the next retry:
-                //         headers[LastEventId] = id;
-                //     } else {
-                //         // don't send the last-event-id header anymore:
-                //         delete headers[LastEventId];
-                //     }
-                // },
-                await getBytes(response.body!,  retry => {
+                
+                await getBytes(response.body!, getLines(getMessages(id => {
+                    // if (id) {
+                    //     // store the id and send it back on the next retry:
+                    //     headers[LastEventId] = id;
+                    // } else {
+                    //     // don't send the last-event-id header anymore:
+                    //     delete headers[LastEventId];
+                    // }
+                }, retry => {
                     retryInterval = retry;
                 }, onmessage)));
 
